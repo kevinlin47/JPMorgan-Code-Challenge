@@ -1,0 +1,4 @@
+AWS Resources- Provisioned (Keeping track so that I remember to delete them and not get charged for it)
+
+- S3 Bucket
+- Lambda
