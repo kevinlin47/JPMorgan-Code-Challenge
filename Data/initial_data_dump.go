@@ -65,7 +65,11 @@ func getItems(fileName string) []Item {
 }
 
 func main() {
-	items := getItems("test-data.json")
+	movies1990s := getItems("movies-1990s.json")
+    movies2000s := getItems("movies-2000s.json")
+    movies2010s := getItems("movies-2010s.json")
 
-	fmt.Println(items)
+	fmt.Println(movies1990s)
+    fmt.Println(movies2000s)
+    fmt.Println(movies2010s)
 }
