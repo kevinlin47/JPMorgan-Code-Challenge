@@ -70,6 +70,30 @@ func getItems(fileName string) []Item {
 	return items
 }
 
+func addMoviesToDynamoDb(movies []Item, tableName string, dynamoDbClient *dynamodb.DynamoDB) {
+	for _, movie := range movies {
+		av, err := dynamodbattribute.MarshalMap(movie)
+
+		if err != nil {
+			log.Fatalf("Got error marshalling map: %s", err)
+		}
+
+		// Create item in table Movies
+		input := &dynamodb.PutItemInput{
+			Item:      av,
+			TableName: aws.String(tableName),
+		}
+
+		_, err = dynamoDbClient.PutItem(input)
+		if err != nil {
+			log.Fatalf("Got error calling PutItem: %s", err)
+		}
+
+		year := strconv.Itoa(movie.Year)
+		fmt.Println("Successfully added '" + movie.Title + "' (" + year + ") to table " + tableName)
+	}
+}
+
 func main() {
 	// Get Movie Objects from the 3 sample data files
 	movies1990s := getItems("movies-1990s.json")
@@ -87,25 +111,9 @@ func main() {
 	// Add each item to Movies table:
 	tableName := "Movies"
 
-	for _, movie := range movies1990s {
-		av, err := dynamodbattribute.MarshalMap(movie)
-
-		if err != nil {
-			log.Fatalf("Got error marshalling map: %s", err)
-		}
-
-		// Create item in table Movies
-		input := &dynamodb.PutItemInput{
-			Item:      av,
-			TableName: aws.String(tableName),
-		}
-
-		_, err = svc.PutItem(input)
-		if err != nil {
-			log.Fatalf("Got error calling PutItem: %s", err)
-		}
-
-		year := strconv.Itoa(movie.Year)
-		fmt.Println("Successfully added '" + movie.Title + "' (" + year + ") to table " + tableName)
-	}
+	// Add the movies from the 3 sample datasets
+	// To AWS DynamoDB
+	addMoviesToDynamoDb(movies1990s, tableName, svc)
+	addMoviesToDynamoDb(movies2000s, tableName, svc)
+	addMoviesToDynamoDb(movies2010s, tableName, svc)
 }
