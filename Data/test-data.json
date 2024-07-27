@@ -1,0 +1,48 @@
+[
+  {
+    "title": "The Adventures of Ford Fairlane",
+    "year": 1990,
+    "cast": [
+      "Andrew Dice Clay",
+      "Wayne Newton",
+      "Priscilla Presley",
+      "Lauren Holly",
+      "Maddie Corman",
+      "Ed O'Neill",
+      "Morris Day",
+      "Tone Loc",
+      "Gilbert Gottfried",
+      "Robert Englund"
+    ],
+    "genres": [
+      "Action",
+      "Comedy",
+      "Mystery"
+    ],
+    "href": "The_Adventures_of_Ford_Fairlane",
+    "extract": "The Adventures of Ford Fairlane is a 1990 American action comedy mystery film directed by Renny Harlin and written by David Arnott, James Cappe, and Daniel Waters based on a story by Arnott and Cappe. The film stars comedian Andrew Dice Clay as the title character, Ford Fairlane, a \"Rock n' Roll Detective\", whose beat is the music industry in Los Angeles. True to his name, Ford drives a 1957 Ford Fairlane 500 Skyliner in the film.",
+    "thumbnail": "https://upload.wikimedia.org/wikipedia/en/a/ac/Fordfairlaneposter.jpg",
+    "thumbnail_width": 259,
+    "thumbnail_height": 384
+  },
+  {
+    "title": "After Dark, My Sweet",
+    "year": 1990,
+    "cast": [
+      "Jason Patric",
+      "Rachel Ward",
+      "Bruce Dern"
+    ],
+    "genres": [
+      "Mystery",
+      "Crime",
+      "Noir",
+      "Thriller"
+    ],
+    "href": "After_Dark,_My_Sweet",
+    "extract": "After Dark, My Sweet is a 1990 American neo-noir crime thriller film directed by James Foley and starring Jason Patric, Bruce Dern, and Rachel Ward. It is based on the 1955 Jim Thompson novel of the same name.",
+    "thumbnail": "https://upload.wikimedia.org/wikipedia/en/e/e2/Afterdarkposter1990.jpg",
+    "thumbnail_width": 255,
+    "thumbnail_height": 383
+  }
+]

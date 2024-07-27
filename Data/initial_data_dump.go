@@ -1,43 +1,60 @@
+package main
+
 import (
-    "github.com/aws/aws-sdk-go/aws"
-    "github.com/aws/aws-sdk-go/aws/session"
-    "github.com/aws/aws-sdk-go/service/dynamodb"
-    "github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+    // "github.com/aws/aws-sdk-go/aws"
+    // "github.com/aws/aws-sdk-go/aws/session"
+    // "github.com/aws/aws-sdk-go/service/dynamodb"
+    // "github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 
     "encoding/json"
     "fmt"
     "log"
     "io/ioutil"
-    "strconv"
+    // "strconv"
 )
 
 // Create struct to hold info about new item
 //Sample Json Object Structure
-// {
-//     "title": "Feeding Sea Lions",
-//     "year": 1900,
-//     "cast": [
-//       "Paul Boyton"
-//     ],
-//     "genres": [
-//       "Short",
-//       "Silent"
-//     ],
-//     "href": "Feeding_Sea_Lions",
-//     "extract": "Feeding Sea Lions is short silent film featuring Paul Boyton feeding sea lions at his Sea Lion Park at Coney Island. Boyton is shown feeding the trained sea lions, twelve in number. The sea lions follow Boyton up the steps of the pool and then follow him back into the water. One of them steals food out of the basket. The film was made by Lubin Studios on March 10, 1900."
-//   }
+// "title": "The Adventures of Ford Fairlane",
+// "year": 1990,
+// "cast": [
+//   "Andrew Dice Clay",
+//   "Wayne Newton",
+//   "Priscilla Presley",
+//   "Lauren Holly",
+//   "Maddie Corman",
+//   "Ed O'Neill",
+//   "Morris Day",
+//   "Tone Loc",
+//   "Gilbert Gottfried",
+//   "Robert Englund"
+// ],
+// "genres": [
+//   "Action",
+//   "Comedy",
+//   "Mystery"
+// ],
+// "href": "The_Adventures_of_Ford_Fairlane",
+// "extract": "The Adventures of Ford Fairlane is a 1990 American action comedy mystery film directed by Renny Harlin and written by David Arnott, James Cappe, and Daniel Waters based on a story by Arnott and Cappe. The film stars comedian Andrew Dice Clay as the title character, Ford Fairlane, a \"Rock n' Roll Detective\", whose beat is the music industry in Los Angeles. True to his name, Ford drives a 1957 Ford Fairlane 500 Skyliner in the film.",
+// "thumbnail": "https://upload.wikimedia.org/wikipedia/en/a/ac/Fordfairlaneposter.jpg",
+// "thumbnail_width": 259,
+// "thumbnail_height": 384
+// }
 type Item struct {
-    Year    int
-    Title   string
-    href    string
-	extract string
-	cast    [] string
-	genres  [] string
+	Title            string
+	Year             int
+	Cast             []string
+	Genres           []string
+	Href             string
+	Extract          string
+	Thumbnail        string
+	Thumbnail_width  int
+	Thumbnail_height int
 }
 
-// Get table items from JSON file
-func getItems() []Item {
-    raw, err := ioutil.ReadFile("./.movies-1990s.json")
+//Get table items from JSON file
+func getItems(fileName string) []Item {
+    raw, err := ioutil.ReadFile("./" + fileName)
     if err != nil {
         log.Fatalf("Got error reading file: %s", err)
     }
@@ -47,6 +64,8 @@ func getItems() []Item {
     return items
 }
 
-items := getItems()
+func main() {
+	items := getItems("test-data.json")
 
-fmt.Println(items)
+	fmt.Println(items)
+}
