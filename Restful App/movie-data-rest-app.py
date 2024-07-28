@@ -90,9 +90,8 @@ class DynamoDB:
             # )
         except ClientError as err:
             logger.error(
-                "Couldn't get movie by year %s from table %s. Here's why: %s: %s",
+                "Couldn't query for movies released in %s. Here's why: %s: %s",
                 year,
-                self.table.name,
                 err.response["Error"]["Code"],
                 err.response["Error"]["Message"],
             )
@@ -101,7 +100,48 @@ class DynamoDB:
             if response["Items"]:
                 return response["Items"]
             else:
-                raise HTTPException(status_code=404, detail="No movie found with the given year") 
+                raise HTTPException(status_code=404, detail="No movie found with the given year")
+
+    def get_movies_by_cast_member(self, cast_member):
+        """
+        Get movies from the table that match the requested cast member
+
+        :param cast_member: name of the cast member 
+        :return: Movie objects mathcing the requested cast_member
+        """
+        movies = []
+        scan_kwargs = {
+                "FilterExpression": "contains(#Cast, :val)",
+                "ExpressionAttributeNames": {
+                    "#Cast": "Cast"
+                },
+                "ExpressionAttributeValues": {
+                    ":val": cast_member
+                }
+            }
+        try:
+            done = False
+            start_key = None
+            while not done:
+                if start_key:
+                    scan_kwargs["ExclusiveStartKey"] = start_key
+
+                response = self.table.scan(**scan_kwargs)
+                movies.extend(response.get("Items", []))
+                start_key = response.get("LastEvaluatedKey", None)
+                done = start_key is None
+        except ClientError as err:
+            logger.error(
+                "Couldn't scan for movies. Here's why: %s: %s",
+                err.response["Error"]["Code"],
+                err.response["Error"]["Message"],
+            )
+            raise
+        else:
+            if movies:
+                return movies
+            else:
+                raise HTTPException(status_code=404, detail="No movie found with the given cast_member")
 
 def get_db_client():
     dyn_resource = boto3.resource("dynamodb")
@@ -111,10 +151,7 @@ def get_db_client():
     return data_base
 
 def get_parameter_error_response(parameter):
-        return {
-            "message":     "No query parameter " + parameter + " was given or parameter is invalid",
-            "status_code": 200
-        }
+        raise HTTPException(status_code=422, detail="No query parameter " + parameter + " was given or parameter is invalid")
 
 data_base = get_db_client()
 app = FastAPI()
@@ -144,3 +181,13 @@ def get_movies_by_year(year: int | None = None):
         return get_parameter_error_response("year")
     
     return data_base.get_movies_by_year(year)
+
+"""
+Query movie database by cast member
+"""
+@app.get("/movies/cast/")
+def get_movies_by_cast_member(cast_member: str | None = None):
+    if cast_member == None:
+        return get_parameter_error_response("cast_member")
+    
+    return data_base.get_movies_by_cast_member(cast_member)
