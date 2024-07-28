@@ -142,6 +142,44 @@ class DynamoDB:
                 return movies
             else:
                 raise HTTPException(status_code=404, detail="No movie found with the given cast_member")
+    
+    def get_movies_by_genre(self, genre):
+        """
+        Get movies from the table that match the requested genre
+
+        :param genre: movie genre
+        :return: Movie objects mathcing the requested genre
+        """
+        movies = []
+        scan_kwargs = {
+                "FilterExpression": "contains(Genres, :val)",
+                "ExpressionAttributeValues": {
+                    ":val": genre
+                }
+            }
+        try:
+            done = False
+            start_key = None
+            while not done:
+                if start_key:
+                    scan_kwargs["ExclusiveStartKey"] = start_key
+
+                response = self.table.scan(**scan_kwargs)
+                movies.extend(response.get("Items", []))
+                start_key = response.get("LastEvaluatedKey", None)
+                done = start_key is None
+        except ClientError as err:
+            logger.error(
+                "Couldn't scan for movies. Here's why: %s: %s",
+                err.response["Error"]["Code"],
+                err.response["Error"]["Message"],
+            )
+            raise
+        else:
+            if movies:
+                return movies
+            else:
+                raise HTTPException(status_code=404, detail="No movie found with the given genre")
 
 def get_db_client():
     dyn_resource = boto3.resource("dynamodb")
@@ -167,7 +205,7 @@ Query movie database by movie name
 """
 @app.get("/movies/title/")
 def get_movies_by_title(movie_name: str | None = None):
-    if  movie_name == None:
+    if  movie_name == None or movie_name == "":
         return get_parameter_error_response("movie_name")
     
     return data_base.get_movie_by_title(movie_name)
@@ -179,7 +217,7 @@ Query movie database by year
 def get_movies_by_year(year: int | None = None):
     if year == None:
         return get_parameter_error_response("year")
-    
+
     return data_base.get_movies_by_year(year)
 
 """
@@ -187,7 +225,17 @@ Query movie database by cast member
 """
 @app.get("/movies/cast/")
 def get_movies_by_cast_member(cast_member: str | None = None):
-    if cast_member == None:
+    if cast_member == None or cast_member == "":
         return get_parameter_error_response("cast_member")
     
     return data_base.get_movies_by_cast_member(cast_member)
+
+"""
+Query movie database by genre
+"""
+@app.get("/movies/genre/")
+def get_movies_by_genre(genre: str | None = None):
+    if genre == None or genre == "":
+        return get_parameter_error_response("genre")
+
+    return data_base.get_movies_by_genre(genre)
