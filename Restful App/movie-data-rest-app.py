@@ -2,7 +2,7 @@
 REST API Application for querying
 movie data set
 """
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 
 import boto3
 from boto3.dynamodb.conditions import Key
@@ -70,10 +70,7 @@ class DynamoDB:
             if "Item" in response:
                 return response["Item"]
             else:
-                return {
-                    "message":     "no movie was found with the given movie_name",
-                    "status_code": 404
-                }
+                raise HTTPException(status_code=404, detail="No movie found with the given movie_name")
 
 def get_db_client():
     dyn_resource = boto3.resource("dynamodb")
