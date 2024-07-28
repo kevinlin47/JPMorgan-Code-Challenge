@@ -71,6 +71,37 @@ class DynamoDB:
                 return response["Item"]
             else:
                 raise HTTPException(status_code=404, detail="No movie found with the given movie_name")
+    
+    def get_movies_by_year(self, year):
+        """
+        Get movies from the table that match the given year
+
+        :param year: The year the movie was released
+        :return: Movie objects mathcing the requested year
+        """
+        try: 
+            response = self.table.query(
+                IndexName="Year-index",
+                KeyConditionExpression=Key("Year").eq(year))
+            # response = self.table.query(
+            #     KeyConditionExpression="#Year = :year",
+            #     ExpressionAttributeNames={ "#Year": "Year"},
+            #     ExpressionAttributeValues={":year": year},
+            # )
+        except ClientError as err:
+            logger.error(
+                "Couldn't get movie by year %s from table %s. Here's why: %s: %s",
+                year,
+                self.table.name,
+                err.response["Error"]["Code"],
+                err.response["Error"]["Message"],
+            )
+            raise
+        else:
+            if response["Items"]:
+                return response["Items"]
+            else:
+                raise HTTPException(status_code=404, detail="No movie found with the given year") 
 
 def get_db_client():
     dyn_resource = boto3.resource("dynamodb")
@@ -78,6 +109,12 @@ def get_db_client():
     data_base.exists("Movies")
 
     return data_base
+
+def get_parameter_error_response(parameter):
+        return {
+            "message":     "No query parameter " + parameter + " was given or parameter is invalid",
+            "status_code": 200
+        }
 
 data_base = get_db_client()
 app = FastAPI()
@@ -89,17 +126,21 @@ def root():
     }
 
 """
-Query movie database
-Data can be queried by year, movie name, genre, or cast member
+Query movie database by movie name
 """
-@app.get("/movies/")
-def get_movies(year: int  | None  = None, movie_name: str | None = None, cast_member: str | None = None, genre: str | None = None):
-    if  year == None and movie_name == None and cast_member == None and genre == None:
-        return {
-            "message":     "No query parameters were given or parameter is invalid",
-            "status_code": 200
-        }
+@app.get("/movies/title/")
+def get_movies_by_title(movie_name: str | None = None):
+    if  movie_name == None:
+        return get_parameter_error_response("movie_name")
     
-    if movie_name != None:
-         # Gets movie data from the table for a specific movie.
-         return data_base.get_movie_by_title(movie_name)
+    return data_base.get_movie_by_title(movie_name)
+
+"""
+Query movie database by year
+"""
+@app.get("/movies/year/")
+def get_movies_by_year(year: int | None = None):
+    if year == None:
+        return get_parameter_error_response("year")
+    
+    return data_base.get_movies_by_year(year)
