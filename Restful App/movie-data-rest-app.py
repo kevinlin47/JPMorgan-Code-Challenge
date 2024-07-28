@@ -67,7 +67,13 @@ class DynamoDB:
             )
             raise
         else:
-            return response["Item"]
+            if "Item" in response:
+                return response["Item"]
+            else:
+                return {
+                    "message":     "no movie was found with the given movie_name",
+                    "status_code": 200
+                }
 
 def get_db_client():
     dyn_resource = boto3.resource("dynamodb")
