@@ -72,7 +72,7 @@ class DynamoDB:
             else:
                 return {
                     "message":     "no movie was found with the given movie_name",
-                    "status_code": 200
+                    "status_code": 404
                 }
 
 def get_db_client():
