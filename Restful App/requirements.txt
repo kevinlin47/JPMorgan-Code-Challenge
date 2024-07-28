@@ -1,4 +1,5 @@
+boto3==1.34.149
+botocore==1.34.149
 fastapi==0.111.1
-fastapi-cli==0.0.4
 uvicorn==0.30.3
 
