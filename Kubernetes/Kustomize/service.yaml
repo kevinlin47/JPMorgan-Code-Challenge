@@ -1,0 +1,10 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: movie-database-service
+spec:
+  selector:
+    app: movie-database-query
+  ports:
+    - port: 80
+      targetPort: 80

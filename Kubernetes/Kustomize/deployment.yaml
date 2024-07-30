@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: movie-database-deployment
+  labels:
+    app: movie-database-query
+spec:
+  selector:
+    matchLabels:
+      app: movie-database-query
+  template:
+    metadata:
+      labels:
+        app: movie-database-query
+    spec:
+      serviceAccountName: k8s-pod-identity-sa
+      containers:
+        - name: my-app
+          image: 563551423471.dkr.ecr.us-east-1.amazonaws.com/jpmorgan-code-project:latest
+          env:
+          - name: AWS_DEFAULT_REGION
+            value: "us-east-1"
+          ports:
+          - containerPort: 80
+          resources:
+            limits: 
+              cpu: "1500m"
+            requests:
+              cpu: "1500m"
+
+
