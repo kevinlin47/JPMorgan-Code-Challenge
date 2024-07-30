@@ -14,6 +14,18 @@ spec:
         app: movie-database-query
     spec:
       serviceAccountName: k8s-pod-identity-sa
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - movie-database-query
+              topologyKey: failure-domain.beta.kubernetes.io/zone
+            weight: 100
       containers:
         - name: my-app
           image: 563551423471.dkr.ecr.us-east-1.amazonaws.com/jpmorgan-code-project:latest
