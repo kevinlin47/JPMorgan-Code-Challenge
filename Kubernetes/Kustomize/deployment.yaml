@@ -28,7 +28,7 @@ spec:
             weight: 100
       containers:
         - name: my-app
-          image: 563551423471.dkr.ecr.us-east-1.amazonaws.com/jpmorgan-code-project:v2
+          image: 563551423471.dkr.ecr.us-east-1.amazonaws.com/jpmorgan-code-project:v3.2
           env:
           - name: AWS_DEFAULT_REGION
             value: "us-east-1"
@@ -45,5 +45,14 @@ spec:
               port: 80
             initialDelaySeconds: 3
             periodSeconds: 3
+          readinessProbe:
+            initialDelaySeconds: 1
+            periodSeconds: 120
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 2
+            httpGet:
+              path: /readiness
+              port: 80
 
 
