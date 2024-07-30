@@ -1,0 +1,14 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-app-ingress
+spec:
+  rules:
+  - http:
+    paths: /
+    pathType: Prefix
+    backend:
+      service:
+        name: movie-database-service
+        port:
+          number: 80

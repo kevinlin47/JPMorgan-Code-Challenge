@@ -5,6 +5,6 @@ namespace: my-app
 
 resources:
   - deployment.yaml
-  # - ingress.yaml
+  - ingress.yaml
   - service.yaml
   - hpa.yaml
