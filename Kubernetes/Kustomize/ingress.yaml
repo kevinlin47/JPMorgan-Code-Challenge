@@ -3,12 +3,14 @@ kind: Ingress
 metadata:
   name: my-app-ingress
 spec:
+  ingressClassName: nginx
   rules:
   - http:
-    paths: /
-    pathType: Prefix
-    backend:
-      service:
-        name: movie-database-service
-        port:
-          number: 80
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: movie-database-service
+            port:
+              number: 80
