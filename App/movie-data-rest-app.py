@@ -200,6 +200,12 @@ def root():
             "API Documentation found at endpoint" : "/docs#/"
     }
 
+@app.get("/healthcheck")
+def health_check():
+    return {
+        "Health Check": "Passed"
+    }
+
 """
 Query movie database by movie name
 """
