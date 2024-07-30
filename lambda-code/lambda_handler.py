@@ -58,8 +58,15 @@ def lambda_handler(event, context):
     try:
       # If a movie with the given name already exists, it will be updated
       print("Executing database put_item\n")
-      print("If an existing entry is updated, the old attribute values will be returned below\n")
-      print(dynamodb.put_item(TableName='Movies', Item=movie, ReturnValues="ALL_OLD")["Attributes"])
+      
+      response = dynamodb.put_item(TableName='Movies', Item=movie, ReturnValues="ALL_OLD")
+
+      if "Attributes" in response:
+        print("Existing data for movie {} has been updated\n".format(json_data[0]["title"]))
+        print("Old Attribute Values:\n")
+        print(response["Attributes"])
+      else:
+        print("New movie {} has been added to the table {}".format(json_data[0]["title"], "Movies"))
 
     except Exception as e:
       print(e)
