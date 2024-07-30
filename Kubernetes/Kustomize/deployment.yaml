@@ -28,7 +28,7 @@ spec:
             weight: 100
       containers:
         - name: my-app
-          image: 563551423471.dkr.ecr.us-east-1.amazonaws.com/jpmorgan-code-project:latest
+          image: 563551423471.dkr.ecr.us-east-1.amazonaws.com/jpmorgan-code-project:v2
           env:
           - name: AWS_DEFAULT_REGION
             value: "us-east-1"
@@ -39,5 +39,11 @@ spec:
               cpu: "1500m"
             requests:
               cpu: "1500m"
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 80
+            initialDelaySeconds: 3
+            periodSeconds: 3
 
 
