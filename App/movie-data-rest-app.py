@@ -83,11 +83,6 @@ class DynamoDB:
             response = self.table.query(
                 IndexName="Year-index",
                 KeyConditionExpression=Key("Year").eq(year))
-            # response = self.table.query(
-            #     KeyConditionExpression="#Year = :year",
-            #     ExpressionAttributeNames={ "#Year": "Year"},
-            #     ExpressionAttributeValues={":year": year},
-            # )
         except ClientError as err:
             logger.error(
                 "Couldn't query for movies released in %s. Here's why: %s: %s",
@@ -205,6 +200,10 @@ def health_check():
     return {
         "Health Check": "Passed"
     }
+
+@app.get("/readiness")
+def readiness_check():
+    return data_base.get_movie_by_title("Venom")
 
 """
 Query movie database by movie name
