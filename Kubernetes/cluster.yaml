@@ -1,0 +1,40 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: basic-cluster
+  region: us-east-1
+
+availabilityZones: ["us-east-1a", "us-east-1b"]
+
+addons:
+  - name: eks-pod-identity-agent
+    tags:
+      team: eks
+
+iam:
+  podIdentityAssociations: 
+  - namespace: my-app
+    serviceAccountName: k8s-pod-identity-sa
+    createServiceAccount: true
+    roleARN: arn:aws:iam::563551423471:role/eks-pod-dyanmodb-full-access
+
+nodeGroups:
+  - name: ng-east-1a
+    instanceType: m5.xlarge
+    desiredCapacity: 2
+    minSize: 2
+    maxSize: 5
+    iam:
+      withAddonPolicies:
+        autoScaler: true
+    availabilityZones: ["us-east-1a"]
+  - name: ng-east-1b
+    instanceType: m5.xlarge
+    desiredCapacity: 2
+    minSize: 2
+    maxSize: 5
+    iam:
+      withAddonPolicies:
+        autoScaler: true
+    availabilityZones: ["us-east-1b"]
