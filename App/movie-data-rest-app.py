@@ -18,7 +18,7 @@ class DynamoDB:
         """
         self.dyn_resource = dyn_resource
         # The table variable is set during the scenario in the call to
-        # 'exists' if the table exists. Otherwise, it is set by 'create_table'.
+        # 'exists' if the table exists.
         self.table = None
 
     def exists(self, table_name):
