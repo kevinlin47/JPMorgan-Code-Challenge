@@ -3,6 +3,8 @@ REST API Application for querying
 movie data set
 """
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 
 import boto3
 from boto3.dynamodb.conditions import Key
@@ -10,6 +12,9 @@ from botocore.exceptions import ClientError
 import logging
 
 logger = logging.getLogger(__name__)
+
+class Message(BaseModel):
+    message: str
 
 class DynamoDB:
     def __init__(self, dyn_resource):
@@ -70,7 +75,7 @@ class DynamoDB:
             if "Item" in response:
                 return response["Item"]
             else:
-                raise HTTPException(status_code=404, detail="No movie found with the given movie_name")
+                return JSONResponse(status_code=404, content={"message": "No movie found with the given movie_name=" + title})
     
     def get_movies_by_year(self, year):
         """
@@ -95,7 +100,7 @@ class DynamoDB:
             if response["Items"]:
                 return response["Items"]
             else:
-                raise HTTPException(status_code=404, detail="No movie found with the given year")
+                return JSONResponse(status_code=404, content={"message": "No movie found with the given year=" + str(year)})
 
     def get_movies_by_cast_member(self, cast_member):
         """
@@ -136,7 +141,7 @@ class DynamoDB:
             if movies:
                 return movies
             else:
-                raise HTTPException(status_code=404, detail="No movie found with the given cast_member")
+                return JSONResponse(status_code=404, content={"message": "No movie found with the given cast_member=" + cast_member})
     
     def get_movies_by_genre(self, genre):
         """
@@ -174,7 +179,7 @@ class DynamoDB:
             if movies:
                 return movies
             else:
-                raise HTTPException(status_code=404, detail="No movie found with the given genre")
+                return JSONResponse(status_code=404, content={"message": "No movie found with the given genre=" + genre})
 
 def get_db_client():
     dyn_resource = boto3.resource("dynamodb")
@@ -208,7 +213,7 @@ def readiness_check():
 """
 Query movie database by movie name
 """
-@app.get("/movies/title/")
+@app.get("/movies/title/", responses={404: {"model": Message}})
 def get_movies_by_title(movie_name: str | None = None):
     if  movie_name == None or movie_name == "":
         return get_parameter_error_response("movie_name")
@@ -218,7 +223,7 @@ def get_movies_by_title(movie_name: str | None = None):
 """
 Query movie database by year
 """
-@app.get("/movies/year/")
+@app.get("/movies/year/", responses={404: {"model": Message}})
 def get_movies_by_year(year: int | None = None):
     if year == None:
         return get_parameter_error_response("year")
@@ -228,7 +233,7 @@ def get_movies_by_year(year: int | None = None):
 """
 Query movie database by cast member
 """
-@app.get("/movies/cast/")
+@app.get("/movies/cast/", responses={404: {"model": Message}})
 def get_movies_by_cast_member(cast_member: str | None = None):
     if cast_member == None or cast_member == "":
         return get_parameter_error_response("cast_member")
@@ -238,7 +243,7 @@ def get_movies_by_cast_member(cast_member: str | None = None):
 """
 Query movie database by genre
 """
-@app.get("/movies/genre/")
+@app.get("/movies/genre/", responses={404: {"model": Message}})
 def get_movies_by_genre(genre: str | None = None):
     if genre == None or genre == "":
         return get_parameter_error_response("genre")
