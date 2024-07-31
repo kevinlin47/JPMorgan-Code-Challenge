@@ -28,5 +28,5 @@ Movie data set https://github.com/prust/wikipedia-movie-data
 For Java solutions, https://start.spring.io
 
 ----------------------------------------------------------------------------------------------------------------------
-## Application Live as of 7/30/24
+## Application Live as of 7/31/24
 ### http://a41760c73978b4953a80c452f02c63b1-1582392590.us-east-1.elb.amazonaws.com/
