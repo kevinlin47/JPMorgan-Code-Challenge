@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 import boto3
+from amazondax import AmazonDaxClient
 from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
 import logging
@@ -52,6 +53,29 @@ class DynamoDB:
         else:
             self.table = table
         return exists
+
+    def set_dax_cache(self, dyn_dax_resource):
+        """
+        Configures DynamoDB resource to use DAX
+
+        :param dyn_dax_resource: A DynamoDB Dax resource.
+        :return: True when connection to DAX cluster is succesful; otherwise False
+        """
+        try:
+            if self.table is None:
+                logger.error(
+                    "Table member variable has not been set yet"
+                )
+                return False
+            
+            table_name = self.table.table_name
+            self.dyn_resource = dyn_dax_resource
+            self.table = self.dyn_resource.Table(table_name)
+            return True
+        except Exception as e:
+            print(e)
+            raise e
+            
 
     def get_movie_by_title(self, title):
         """
@@ -185,6 +209,10 @@ def get_db_client():
     dyn_resource = boto3.resource("dynamodb")
     data_base = DynamoDB(dyn_resource)
     data_base.exists("Movies")
+
+    dyn_dax_resource  = AmazonDaxClient.resource(
+    endpoint_url='dax://dax-movie-cluster-2.4tcfh6.dax-clusters.us-east-1.amazonaws.com')
+    data_base.set_dax_cache(dyn_dax_resource)
 
     return data_base
 

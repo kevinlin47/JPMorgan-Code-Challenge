@@ -2,4 +2,5 @@ boto3==1.34.149
 botocore==1.34.149
 fastapi==0.111.1
 uvicorn==0.30.3
+amazon-dax-client==2.0.3
 
