@@ -6,6 +6,8 @@ AWS Resources- Provisioned (Keeping track so that I remember to delete them and 
     name -> updateMovieDatabase
 - DynamoDB
     name -> Movies
+- DAX Cluster
+    name -> dax-movie-cluster-2
 - ECR
     Remove images
 - EKS
