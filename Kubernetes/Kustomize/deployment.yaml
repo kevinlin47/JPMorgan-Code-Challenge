@@ -28,7 +28,7 @@ spec:
             weight: 100
       containers:
         - name: my-app
-          image: 563551423471.dkr.ecr.us-east-1.amazonaws.com/jpmorgan-code-project:v4.0
+          image: 563551423471.dkr.ecr.us-east-1.amazonaws.com/jpmorgan-code-project:v4.1
           env:
           - name: AWS_DEFAULT_REGION
             value: "us-east-1"
