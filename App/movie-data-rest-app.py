@@ -72,9 +72,13 @@ class DynamoDB:
             self.dyn_resource = dyn_dax_resource
             self.table = self.dyn_resource.Table(table_name)
             return True
-        except Exception as e:
-            print(e)
-            raise e
+        except ClientError as err:
+            logger.error(
+                    "%s: %s",
+                    err.response["Error"]["Code"],
+                    err.response["Error"]["Message"],
+            )
+            raise
             
 
     def get_movie_by_title(self, title):
